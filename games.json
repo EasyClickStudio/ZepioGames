@@ -1,1 +1,29 @@
-
+[
+  {
+    "id": "space-runner",
+    "title": "Space Runner 2026",
+    "category": "Arcade",
+    "platform": "MakeCode",
+    "thumbnail": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80",
+    "url": "https://arcade.makecode.com/---12345-67890",
+    "description": "Космический раннер, созданный на MakeCode Arcade."
+  },
+  {
+    "id": "neon-ninja",
+    "title": "Neon Ninja Quest",
+    "category": "Action",
+    "platform": "Scratch",
+    "thumbnail": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80",
+    "url": "https://turbowarp.org/60917032/embed",
+    "description": "Быстрый 60 FPS платформер через плеер TurboWarp."
+  },
+  {
+    "id": "pixel-shooter",
+    "title": "Retro Shooter",
+    "category": "Retro",
+    "platform": "HTML5",
+    "thumbnail": "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=600&auto=format&fit=crop&q=80",
+    "url": "./games/retro-shooter/index.html",
+    "description": "Собственная HTML5-игра, размещенная прямо в репозитории."
+  }
+]
