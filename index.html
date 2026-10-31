@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZepioGames — Онлайн игры</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0c0d14;
+      --bg-card: #151724;
+      --bg-card-hover: #1e2134;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.35);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Навигация */
+    header {
+      background: rgba(12, 13, 20, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 14px 24px;
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .logo span {
+      background: linear-gradient(135deg, #a855f7, #6366f1, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .search-box {
+      flex: 1;
+      max-width: 460px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 18px 10px 42px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Категории */
+    .categories-bar {
+      max-width: 1400px;
+      margin: 20px auto 0;
+      padding: 0 24px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .categories-bar::-webkit-scrollbar { display: none; }
+
+    .cat-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .cat-btn:hover {
+      background: var(--bg-card-hover);
+      color: #fff;
+    }
+
+    .cat-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    /* Сетка игр */
+    main {
+      max-width: 1400px;
+      margin: 24px auto;
+      padding: 0 24px;
+      flex: 1;
+      width: 100%;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 18px;
+    }
+
+    .game-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45), 0 0 20px var(--accent-glow);
+    }
+
+    .thumb-wrapper {
+      width: 100%;
+      padding-top: 68%;
+      position: relative;
+      background: #0f111a;
+      overflow: hidden;
+    }
+
+    .thumb-wrapper img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .game-card:hover .thumb-wrapper img {
+      transform: scale(1.08);
+    }
+
+    .platform-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-info {
+      padding: 12px 14px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Модальное окно плеера */
+    .player-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 9, 14, 0.94);
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .player-modal.active {
+      display: flex;
+    }
+
+    .player-window {
+      width: 100%;
+      max-width: 1080px;
+      height: 85vh;
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(99, 102, 241, 0.2);
+    }
+
+    .player-header {
+      background: #151724;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .player-title {
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .player-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .action-btn {
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--accent);
+    }
+
+    .close-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    .close-btn:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .iframe-box {
+      flex: 1;
+      width: 100%;
+      background: #000;
+      position: relative;
+    }
+
+    .iframe-box iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Пустое состояние */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 640px) {
+      .games-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .player-window { height: 95vh; border-radius: 12px; }
+      .header-inner { flex-wrap: wrap; }
+      .search-box { order: 3; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo" onclick="resetFilter()">⚡ <span>ZepioGames</span></div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Поиск игр...">
+      </div>
+    </div>
+  </header>
+
+  <div class="categories-bar" id="categoriesBar">
+    <!-- Кнопки категорий генерируются через JS -->
+  </div>
+
+  <main>
+    <div class="games-grid" id="gamesGrid"></div>
+  </main>
+
+  <!-- Модалка с игрой -->
+  <div class="player-modal" id="playerModal">
+    <div class="player-window" id="playerWindow">
+      <div class="player-header">
+        <div class="player-title">
+          <span id="activeGameTitle">Game Title</span>
+          <span class="platform-badge" id="activeGamePlatform">MakeCode</span>
+        </div>
+        <div class="player-actions">
+          <button class="action-btn" onclick="reloadCurrentGame()">🔄 Заново</button>
+          <button class="action-btn" onclick="toggleFullScreen()">⛶ Полный экран</button>
+          <button class="action-btn close-btn" onclick="closePlayer()">✕ Закрыть</button>
+        </div>
+      </div>
+      <div class="iframe-box">
+        <iframe id="gameIframe" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allGames = [];
+    let activeCategory = 'Все';
+
+    async function init() {
+      try {
+        const response = await fetch('games.json');
+        if (!response.ok) throw new Error('Не удалось загрузить games.json');
+        allGames = await response.json();
+      } catch (err) {
+        console.warn('Загружаем резервный список, так как games.json еще не найден локально:', err);
+        allGames = [
+          {
+            id: 'sample-makecode',
+            title: 'Sample MakeCode',
+            category: 'Arcade',
+            platform: 'MakeCode',
+            thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+            url: 'https://arcade.makecode.com/---35398-35759-47043-44177',
+            description: 'Демонстрационная игра'
+          }
+        ];
+      }
+
+      setupCategories();
+      renderGames();
+      setupEvents();
+    }
+
+    function setupCategories() {
+      const categories = ['Все', ...new Set(allGames.map(g => g.category))];
+      const container = document.getElementById('categoriesBar');
+      container.innerHTML = categories.map(cat => `
+        <button class="cat-btn ${cat === activeCategory ? 'active' : ''}" onclick="filterByCategory('${cat}')">
+          ${cat}
+        </button>
+      `).join('');
+    }
+
+    function filterByCategory(cat) {
+      activeCategory = cat;
+      setupCategories();
+      renderGames();
+    }
+
+    function resetFilter() {
+      activeCategory = 'Все';
+      document.getElementById('searchInput').value = '';
+      setupCategories();
+      renderGames();
+    }
+
+    function renderGames() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const grid = document.getElementById('gamesGrid');
+
+      const filtered = allGames.filter(game => {
+        const matchCat = activeCategory === 'Все' || game.category === activeCategory;
+        const matchSearch = game.title.toLowerCase().includes(query) || 
+                            game.platform.toLowerCase().includes(query) ||
+                            game.category.toLowerCase().includes(query);
+        return matchCat && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><h3>Игры не найдены 🎮</h3><p>Попробуй сбросить фильтры или изменить поиск</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(game => `
+        <div class="game-card" onclick="openGame('${game.id}')">
+          <div class="thumb-wrapper">
+            <img src="${game.thumbnail}" alt="${game.title}" loading="lazy">
+            <span class="platform-badge">${game.platform}</span>
+          </div>
+          <div class="card-info">
+            <div class="card-title">${game.title}</div>
+            <div class="card-meta">
+              <span>${game.category}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function setupEvents() {
+      document.getElementById('searchInput').addEventListener('input', renderGames);
+      
+      // Закрытие по клавише Escape
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closePlayer();
+      });
+    }
+
+    function openGame(gameId) {
+      const game = allGames.find(g => g.id === gameId);
+      if (!game) return;
+
+      document.getElementById('activeGameTitle').textContent = game.title;
+      document.getElementById('activeGamePlatform').textContent = game.platform;
+      
+      const iframe = document.getElementById('gameIframe');
+      iframe.src = game.url;
+
+      document.getElementById('playerModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePlayer() {
+      const modal = document.getElementById('playerModal');
+      modal.classList.remove('active');
+      document.getElementById('gameIframe').src = '';
+      document.body.style.overflow = 'auto';
+
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function reloadCurrentGame() {
+      const iframe = document.getElementById('gameIframe');
+      const cur = iframe.src;
+      iframe.src = '';
+      setTimeout(() => { iframe.src = cur; }, 100);
+    }
+
+    function toggleFullScreen() {
+      const target = document.getElementById('playerWindow');
+      if (!document.fullscreenElement) {
+        target.requestFullscreen().catch(err => alert('Ошибка полного экрана: ' + err.message));
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
