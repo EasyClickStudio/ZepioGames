@@ -1,1 +1,9 @@
-
+[
+  {
+    "id": "neon-maze",
+    "title": "Neon maze",
+    "category": "Arcade",
+    "thumbnail": "https://i.ibb.co/yFC89dVD/Gemini-Generated-Image-mdiy3omdiy3omdiy.jpg",
+    "url": "./games/neon-maze/index.html"
+  }
+]
