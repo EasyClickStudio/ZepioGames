@@ -12,10 +12,9 @@
       --bg-base: #090a0f;
       --bg-surface: #12141d;
       --bg-elevated: #1a1d2b;
-      --bg-card-hover: #222638;
       --primary: #6366f1;
       --primary-hover: #4f46e5;
-      --primary-glow: rgba(99, 102, 241, 0.35);
+      --primary-glow: rgba(99, 102, 241, 0.4);
       --accent: #38bdf8;
       --text: #f8fafc;
       --text-muted: #8b949e;
@@ -132,7 +131,7 @@
       flex: 1;
     }
 
-    /* CrazyGames Left Sidebar */
+    /* Categories Sidebar */
     aside.sidebar {
       width: var(--sidebar-w);
       background: var(--bg-surface);
@@ -191,7 +190,7 @@
       text-align: center;
     }
 
-    /* Content Area */
+    /* Main Content */
     .main-content {
       flex: 1;
       padding: 24px;
@@ -199,20 +198,6 @@
       margin: 0 auto;
       width: calc(100% - var(--sidebar-w));
     }
-
-    /* Hidden AD Slot: Top Billboard (728x90) */
-    .ad-billboard {
-      width: 100%;
-      min-height: 90px;
-      margin-bottom: 24px;
-      display: none; /* Add class "has-ad" to display when you paste your ad script */
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px dashed rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius);
-    }
-    .ad-billboard.has-ad { display: flex; }
 
     .feed-header {
       display: flex;
@@ -385,6 +370,7 @@
       width: 100%;
       background: #000;
       position: relative;
+      cursor: pointer;
     }
 
     .iframe-stage iframe {
@@ -394,37 +380,72 @@
       display: block;
     }
 
-    /* Branded Loader */
+    /* Branded Animated Loader */
     .zepio-loader {
       position: absolute;
       inset: 0;
-      background: #0c0e15;
+      background: #090a10;
       z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      transition: opacity 0.25s ease;
+      gap: 18px;
+      transition: opacity 0.35s ease, visibility 0.35s;
     }
 
     .zepio-loader.hidden {
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
     }
 
-    .loader-spin {
-      width: 44px;
-      height: 44px;
-      border: 4px solid rgba(99, 102, 241, 0.2);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .loader-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 30px;
+      box-shadow: 0 0 35px var(--primary-glow);
+      animation: pulseIcon 1.5s ease-in-out infinite alternate;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulseIcon {
+      from { transform: scale(0.95); box-shadow: 0 0 20px var(--primary-glow); }
+      to { transform: scale(1.06); box-shadow: 0 0 45px rgba(56, 189, 248, 0.6); }
+    }
 
-    /* Branded Error Screen (Intercepts 404 and broken links) */
+    .loader-bar-wrap {
+      width: 240px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loader-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6366f1, #38bdf8);
+      box-shadow: 0 0 12px var(--accent);
+      border-radius: 999px;
+      transition: width 0.25s ease-out;
+    }
+
+    .loader-status {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.4px;
+    }
+
+    /* Branded Error Screen */
     .zepio-error-screen {
       position: absolute;
       inset: 0;
@@ -444,7 +465,6 @@
     .err-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
     .err-desc { font-size: 13px; color: var(--text-muted); max-width: 400px; margin-bottom: 20px; line-height: 1.5; }
 
-    /* Empty state */
     .empty-box {
       grid-column: 1 / -1;
       text-align: center;
@@ -462,7 +482,6 @@
 </head>
 <body>
 
-  <!-- Top Header -->
   <header>
     <div class="header-inner">
       <div class="logo" onclick="resetFilter()">
@@ -478,7 +497,6 @@
   </header>
 
   <div class="app-layout">
-    <!-- Categories Sidebar -->
     <aside class="sidebar">
       <div class="nav-label">Discover</div>
       <div class="nav-item active" onclick="filterCat('All')">
@@ -523,19 +541,13 @@
       </div>
     </aside>
 
-    <!-- Main Game Feed -->
     <main class="main-content">
-      
-      <!-- Hidden Ad Slot (Billboard 728x90) -->
-      <div class="ad-billboard" id="adTopSlot"></div>
-
       <div class="feed-header">
         <div class="feed-title">
           <span id="categoryEmoji">🔥</span>
           <span id="categoryTitle">All Games</span>
         </div>
       </div>
-
       <div class="games-grid" id="gamesGrid"></div>
     </main>
   </div>
@@ -552,22 +564,25 @@
         </div>
       </div>
 
-      <div class="iframe-stage">
-        <!-- Zepio Loader -->
+      <div class="iframe-stage" id="iframeStage">
+        <!-- Zepio Branded Dynamic Loader -->
         <div class="zepio-loader" id="zepioLoader">
-          <div class="loader-spin"></div>
-          <div style="font-size: 13px; font-weight: 700; color: var(--text-muted);">Loading Game...</div>
+          <div class="loader-icon">⚡</div>
+          <div class="loader-bar-wrap">
+            <div class="loader-bar-fill" id="loaderBarFill"></div>
+          </div>
+          <div class="loader-status" id="loaderStatus">Initializing game engine...</div>
         </div>
 
-        <!-- Custom Zepio Error Screen -->
+        <!-- Custom Error Screen -->
         <div class="zepio-error-screen" id="zepioError">
           <div class="err-icon">⚠️</div>
           <div class="err-title">Game Not Found</div>
-          <div class="err-desc" id="errDescText">The game files could not be reached or the link has not been published yet.</div>
+          <div class="err-desc">The game files could not be reached or the link has not been published yet.</div>
           <button class="btn-ctrl" onclick="closePlayer()">Go Back to Games</button>
         </div>
 
-        <iframe id="gameIframe" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>
+        <iframe id="gameIframe" allow="fullscreen; autoplay; gamepad; keyboard" allowfullscreen></iframe>
       </div>
     </div>
   </div>
@@ -576,6 +591,7 @@
     let games = [];
     let currentCategory = 'All';
     let currentGame = null;
+    let progressTimer = null;
 
     async function init() {
       try {
@@ -583,12 +599,12 @@
         if (!res.ok) throw new Error('games.json missing');
         games = await res.json();
       } catch (err) {
-        console.log('No games loaded yet. Add games to games.json');
         games = [];
       }
 
       renderGrid();
       setupSearch();
+      setupStageFocus();
     }
 
     function renderGrid() {
@@ -658,7 +674,59 @@
       });
     }
 
-    /* Modal & 404 Shield */
+    /* Loading Progress Simulation */
+    function startProgress() {
+      const fill = document.getElementById('loaderBarFill');
+      const status = document.getElementById('loaderStatus');
+      fill.style.width = '10%';
+      status.textContent = 'Allocating memory buffer...';
+
+      let p = 10;
+      clearInterval(progressTimer);
+      progressTimer = setInterval(() => {
+        if (p < 85) {
+          p += Math.floor(Math.random() * 15) + 5;
+          if (p > 85) p = 85;
+          fill.style.width = p + '%';
+          if (p > 40 && p < 70) status.textContent = 'Loading game assets...';
+          if (p >= 70) status.textContent = 'Finalizing canvas renderer...';
+        }
+      }, 200);
+    }
+
+    function finishProgress(callback) {
+      clearInterval(progressTimer);
+      const fill = document.getElementById('loaderBarFill');
+      const status = document.getElementById('loaderStatus');
+      fill.style.width = '100%';
+      status.textContent = 'Ready! Focusing game...';
+
+      setTimeout(() => {
+        document.getElementById('zepioLoader').classList.add('hidden');
+        if (callback) callback();
+      }, 350);
+    }
+
+    /* Auto-focus to immediately route mouse & keyboard into the game */
+    function focusGame() {
+      const iframe = document.getElementById('gameIframe');
+      try {
+        iframe.focus();
+        if (iframe.contentWindow) {
+          iframe.contentWindow.focus();
+        }
+      } catch (err) {
+        iframe.focus();
+      }
+    }
+
+    function setupStageFocus() {
+      const stage = document.getElementById('iframeStage');
+      stage.addEventListener('mouseenter', focusGame);
+      stage.addEventListener('click', focusGame);
+    }
+
+    /* Launch & Play */
     async function launchGame(id) {
       currentGame = games.find(g => g.id === id);
       if (!currentGame) return;
@@ -673,17 +741,21 @@
       document.getElementById('playerModal').classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      // 404 Shield for internal HTML games
+      startProgress();
+
+      // 404 Shield for internal relative paths
       if (currentGame.url.startsWith('./') || currentGame.url.startsWith('/')) {
         try {
           const check = await fetch(currentGame.url, { method: 'HEAD' });
           if (!check.ok) {
+            clearInterval(progressTimer);
             loader.classList.add('hidden');
             errScreen.classList.add('visible');
             iframe.src = '';
             return;
           }
         } catch (e) {
+          clearInterval(progressTimer);
           loader.classList.add('hidden');
           errScreen.classList.add('visible');
           iframe.src = '';
@@ -693,11 +765,17 @@
 
       iframe.src = currentGame.url;
       iframe.onload = () => {
-        setTimeout(() => loader.classList.add('hidden'), 200);
+        finishProgress(() => {
+          focusGame();
+          // Secondary focus pulse to guarantee key-capture
+          setTimeout(focusGame, 100);
+          setTimeout(focusGame, 300);
+        });
       };
     }
 
     function closePlayer() {
+      clearInterval(progressTimer);
       document.getElementById('playerModal').classList.remove('active');
       document.getElementById('gameIframe').src = '';
       document.body.style.overflow = 'auto';
@@ -715,6 +793,7 @@
       } else {
         document.exitFullscreen().catch(() => {});
       }
+      setTimeout(focusGame, 150);
     }
 
     init();
