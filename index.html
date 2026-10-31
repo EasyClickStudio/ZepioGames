@@ -3,38 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZepioGames — Free Online Games on Crazy Arcade</title>
+  <title>ZepioGames — Free Online Games</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-base: #08090d;
-      --bg-surface: #10121a;
-      --bg-elevated: #181b26;
-      --bg-card-hover: #222636;
+      --bg-base: #090a0f;
+      --bg-surface: #12141d;
+      --bg-elevated: #1a1d2b;
+      --bg-card-hover: #222638;
       --primary: #6366f1;
       --primary-hover: #4f46e5;
-      --primary-glow: rgba(99, 102, 241, 0.4);
-      --accent-cyan: #06b6d4;
-      --accent-pink: #ec4899;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --accent: #38bdf8;
       --text: #f8fafc;
-      --text-muted: #8e95aa;
-      --border: rgba(255, 255, 255, 0.07);
-      --border-bright: rgba(255, 255, 255, 0.15);
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --sidebar-w: 220px;
-      --sidebar-collapsed-w: 68px;
+      --text-muted: #8b949e;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      --radius: 16px;
+      --sidebar-w: 230px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-font-smoothing: antialiased;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     body {
@@ -46,18 +41,18 @@
       overflow-x: hidden;
     }
 
-    /* Top Sticky Header */
+    /* Header */
     header {
-      background: rgba(16, 18, 26, 0.85);
+      background: rgba(18, 20, 29, 0.85);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
-      z-index: 60;
+      z-index: 50;
       height: 64px;
       display: flex;
       align-items: center;
-      padding: 0 20px;
+      padding: 0 24px;
     }
 
     .header-inner {
@@ -68,61 +63,57 @@
       gap: 20px;
     }
 
-    .logo-area {
+    .logo {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #fff;
       display: flex;
       align-items: center;
-      gap: 12px;
-      text-decoration: none;
+      gap: 10px;
       cursor: pointer;
       user-select: none;
     }
 
     .logo-badge {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
       border-radius: 10px;
-      background: linear-gradient(135deg, #6366f1, #06b6d4);
       display: grid;
       place-items: center;
       font-size: 18px;
       box-shadow: 0 0 16px var(--primary-glow);
     }
 
-    .logo-text {
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: -0.6px;
-      color: #fff;
-    }
-
-    .logo-text span {
+    .logo span {
       background: linear-gradient(135deg, #a855f7, #6366f1, #38bdf8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .search-wrapper {
+    .search-box {
       flex: 1;
-      max-width: 520px;
+      max-width: 500px;
       position: relative;
     }
 
-    .search-wrapper input {
+    .search-box input {
       width: 100%;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 10px 18px 10px 44px;
+      padding: 10px 18px 10px 42px;
       color: #fff;
       font-size: 14px;
       outline: none;
       transition: all 0.2s ease;
     }
 
-    .search-wrapper input:focus {
+    .search-box input:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px var(--primary-glow);
-      background: #1c202e;
+      background: #202436;
     }
 
     .search-icon {
@@ -131,43 +122,14 @@
       top: 50%;
       transform: translateY(-50%);
       font-size: 14px;
-      color: var(--text-muted);
       pointer-events: none;
+      opacity: 0.6;
     }
 
-    .header-tags {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .pill-btn {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .pill-btn:hover, .pill-btn.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-      box-shadow: 0 0 12px var(--primary-glow);
-    }
-
-    /* Layout Shell */
-    .app-shell {
+    /* Layout */
+    .app-layout {
       display: flex;
       flex: 1;
-      position: relative;
     }
 
     /* CrazyGames Left Sidebar */
@@ -183,7 +145,6 @@
       top: 64px;
       height: calc(100vh - 64px);
       overflow-y: auto;
-      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       flex-shrink: 0;
     }
 
@@ -191,7 +152,7 @@
     aside.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
     .nav-label {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -204,13 +165,13 @@
       align-items: center;
       gap: 12px;
       padding: 10px 14px;
-      border-radius: var(--radius-sm);
+      border-radius: 10px;
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      user-select: none;
     }
 
     .nav-item:hover {
@@ -221,18 +182,17 @@
     .nav-item.active {
       background: var(--primary);
       color: #fff;
-      box-shadow: 0 0 14px var(--primary-glow);
+      box-shadow: 0 0 16px var(--primary-glow);
     }
 
-    .nav-icon {
-      font-size: 16px;
-      display: grid;
-      place-items: center;
-      width: 20px;
+    .nav-emoji {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
     }
 
     /* Content Area */
-    .main-viewport {
+    .main-content {
       flex: 1;
       padding: 24px;
       max-width: 1440px;
@@ -240,144 +200,46 @@
       width: calc(100% - var(--sidebar-w));
     }
 
-    /* AD SLOT: Header Leaderboard (728x90) */
-    .ad-slot-leaderboard {
+    /* Hidden AD Slot: Top Billboard (728x90) */
+    .ad-billboard {
       width: 100%;
       min-height: 90px;
       margin-bottom: 24px;
-      display: none; /* Auto-revealed when ad script populates */
+      display: none; /* Add class "has-ad" to display when you paste your ad script */
       align-items: center;
       justify-content: center;
       background: rgba(255, 255, 255, 0.02);
       border: 1px dashed rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-md);
-      position: relative;
+      border-radius: var(--radius);
     }
-    .ad-slot-leaderboard.has-ad { display: flex; }
-    .ad-slot-leaderboard::after {
-      content: "ADVERTISEMENT";
-      position: absolute;
-      top: 4px;
-      right: 8px;
-      font-size: 9px;
-      color: rgba(255, 255, 255, 0.25);
-      font-weight: 700;
-    }
+    .ad-billboard.has-ad { display: flex; }
 
-    /* Hero / Featured Game Showcase */
-    .featured-hero {
-      position: relative;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      margin-bottom: 30px;
-      background: linear-gradient(135deg, #1e1b4b, #0f172a);
-      border: 1px solid var(--border-bright);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      cursor: pointer;
-      transition: transform 0.25s, box-shadow 0.25s;
-    }
-
-    .featured-hero:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 24px 50px rgba(99, 102, 241, 0.25);
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      padding: 36px 40px;
-      max-width: 580px;
-      background: linear-gradient(90deg, rgba(8, 9, 13, 0.95) 45%, rgba(8, 9, 13, 0.6) 80%, transparent 100%);
-    }
-
-    .hero-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(90deg, #ec4899, #f43f5e);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.5px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .hero-title {
-      font-size: 32px;
-      font-weight: 900;
-      line-height: 1.15;
-      margin-bottom: 10px;
-      color: #fff;
-    }
-
-    .hero-desc {
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .hero-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #fff;
-      color: #000;
-      font-size: 14px;
-      font-weight: 800;
-      padding: 12px 24px;
-      border-radius: 12px;
-      transition: background 0.2s, transform 0.2s;
-    }
-
-    .hero-btn:hover {
-      background: #38bdf8;
-      color: #000;
-      transform: scale(1.03);
-    }
-
-    .hero-bg-img {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 65%;
-      height: 100%;
-      object-fit: cover;
-      mask-image: linear-gradient(to left, black 60%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to left, black 60%, transparent 100%);
-    }
-
-    /* Section Headers */
-    .section-head {
+    .feed-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 18px;
     }
 
-    .section-title {
-      font-size: 18px;
+    .feed-title {
+      font-size: 20px;
       font-weight: 800;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     /* Games Grid */
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 18px;
-      margin-bottom: 40px;
     }
 
     .game-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius);
       overflow: hidden;
       cursor: pointer;
       position: relative;
@@ -388,15 +250,15 @@
 
     .game-card:hover {
       transform: translateY(-6px) scale(1.02);
-      border-color: rgba(99, 102, 241, 0.6);
-      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.5), 0 0 24px var(--primary-glow);
+      border-color: var(--border-focus);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5), 0 0 24px var(--primary-glow);
     }
 
     .card-thumb {
       width: 100%;
       padding-top: 68%;
       position: relative;
-      background: #000;
+      background: #0f1118;
       overflow: hidden;
     }
 
@@ -411,44 +273,11 @@
     }
 
     .game-card:hover .card-thumb img {
-      transform: scale(1.1);
+      transform: scale(1.08);
     }
 
-    .card-badge {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      backdrop-filter: blur(6px);
-      z-index: 2;
-    }
-
-    .badge-makecode {
-      background: rgba(14, 165, 233, 0.85);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .badge-scratch {
-      background: rgba(249, 115, 22, 0.85);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .badge-html5 {
-      background: rgba(34, 197, 94, 0.85);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .card-body {
+    .card-info {
       padding: 12px 14px;
-      background: var(--bg-surface);
     }
 
     .card-title {
@@ -461,21 +290,21 @@
       margin-bottom: 4px;
     }
 
-    .card-foot {
+    .card-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 600;
     }
 
-    /* Modal Player (CrazyGames Theater Mode) */
-    .theater-modal {
+    /* Modal Player */
+    .player-modal {
       position: fixed;
       inset: 0;
-      background: rgba(4, 5, 8, 0.96);
-      backdrop-filter: blur(20px);
+      background: rgba(4, 5, 8, 0.95);
+      backdrop-filter: blur(16px);
       z-index: 100;
       display: none;
       flex-direction: column;
@@ -484,35 +313,29 @@
       padding: 14px;
     }
 
-    .theater-modal.active { display: flex; }
+    .player-modal.active { display: flex; }
 
-    .theater-container {
+    .player-window {
       width: 100%;
-      max-width: 1200px;
-      height: 92vh;
+      max-width: 1140px;
+      height: 90vh;
       background: var(--bg-surface);
-      border: 1px solid var(--border-bright);
-      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 50px var(--primary-glow);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 40px var(--primary-glow);
     }
 
-    .theater-topbar {
+    .player-header {
       height: 52px;
-      background: #141622;
+      background: #141724;
       padding: 0 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
-    }
-
-    .game-meta-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
     }
 
     .game-name {
@@ -521,17 +344,17 @@
       color: #fff;
     }
 
-    .game-controls-actions {
+    .player-controls {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .btn-action {
+    .btn-ctrl {
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       color: #fff;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 8px;
       font-size: 12px;
       font-weight: 700;
@@ -542,9 +365,8 @@
       transition: all 0.2s;
     }
 
-    .btn-action:hover {
+    .btn-ctrl:hover {
       background: var(--primary);
-      border-color: var(--primary);
     }
 
     .btn-close {
@@ -556,88 +378,57 @@
     .btn-close:hover {
       background: #ef4444;
       color: #fff;
-      border-color: #ef4444;
     }
 
-    .theater-main-stage {
+    .iframe-stage {
       flex: 1;
       width: 100%;
       background: #000;
       position: relative;
-      display: flex;
     }
 
-    .stage-iframe-holder {
-      flex: 1;
-      height: 100%;
-      position: relative;
-    }
-
-    .stage-iframe-holder iframe {
+    .iframe-stage iframe {
       width: 100%;
       height: 100%;
       border: none;
       display: block;
     }
 
-    /* AD SLOT: Theater Side Skyscraper (300x600 or 300x250) */
-    .ad-slot-theater-side {
-      width: 300px;
-      height: 100%;
-      background: #0b0c13;
-      border-left: 1px solid var(--border);
-      display: none; /* Auto-revealed when loaded */
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .ad-slot-theater-side.has-ad { display: flex; }
-
-    /* Custom Zepio Brand Loader & Error Guard */
-    .zepio-shield-overlay {
+    /* Branded Loader */
+    .zepio-loader {
       position: absolute;
       inset: 0;
-      background: #090a10;
+      background: #0c0e15;
       z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      transition: opacity 0.3s ease;
+      gap: 14px;
+      transition: opacity 0.25s ease;
     }
 
-    .zepio-shield-overlay.hidden {
+    .zepio-loader.hidden {
       opacity: 0;
       pointer-events: none;
     }
 
-    .loader-ring {
-      width: 48px;
-      height: 48px;
+    .loader-spin {
+      width: 44px;
+      height: 44px;
       border: 4px solid rgba(99, 102, 241, 0.2);
       border-top-color: var(--primary);
-      border-right-color: var(--accent-cyan);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .loader-text {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.3px;
-    }
-
-    /* Zepio Custom Error Screen */
-    .zepio-error-state {
+    /* Branded Error Screen (Intercepts 404 and broken links) */
+    .zepio-error-screen {
       position: absolute;
       inset: 0;
-      background: #0b0c14;
+      background: #0c0e15;
       z-index: 15;
       display: none;
       flex-direction: column;
@@ -647,452 +438,283 @@
       text-align: center;
     }
 
-    .zepio-error-state.visible { display: flex; }
+    .zepio-error-screen.visible { display: flex; }
 
-    .error-shield-icon {
-      font-size: 42px;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.4));
-    }
+    .err-icon { font-size: 46px; margin-bottom: 12px; }
+    .err-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .err-desc { font-size: 13px; color: var(--text-muted); max-width: 400px; margin-bottom: 20px; line-height: 1.5; }
 
-    .error-shield-title {
-      font-size: 20px;
-      font-weight: 900;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .error-shield-msg {
-      font-size: 13px;
+    /* Empty state */
+    .empty-box {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
       color: var(--text-muted);
-      max-width: 400px;
-      line-height: 1.5;
-      margin-bottom: 20px;
     }
 
-    .btn-retry {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 10px 22px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.2s, transform 0.2s;
-    }
-
-    .btn-retry:hover {
-      background: var(--primary-hover);
-      transform: scale(1.04);
-    }
-
-    /* AD SLOT: Under Player Banner (728x90) */
-    .ad-slot-theater-bottom {
-      width: 100%;
-      min-height: 90px;
-      background: #0e1018;
-      border-top: 1px solid var(--border);
-      display: none; /* Auto-revealed when loaded */
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .ad-slot-theater-bottom.has-ad { display: flex; }
-
-    /* Mobile Responsive */
-    @media (max-width: 900px) {
-      aside.sidebar { width: var(--sidebar-collapsed-w); padding: 12px 6px; }
-      .nav-label { display: none; }
-      .nav-item span { display: none; }
-      .nav-item { justify-content: center; padding: 12px 0; }
-      .main-viewport { width: calc(100% - var(--sidebar-collapsed-w)); padding: 16px; }
-      .hero-content { padding: 24px; }
-      .hero-title { font-size: 24px; }
-      .hero-bg-img { width: 100%; opacity: 0.35; }
-      .ad-slot-theater-side { display: none !important; }
-    }
-
-    @media (max-width: 640px) {
+    @media (max-width: 800px) {
       aside.sidebar { display: none; }
-      .main-viewport { width: 100%; padding: 12px; }
+      .main-content { width: 100%; padding: 16px; }
       .games-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .theater-container { height: 100vh; border-radius: 0; }
+      .player-window { height: 100vh; border-radius: 0; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Sticky Navigation Bar -->
+  <!-- Top Header -->
   <header>
     <div class="header-inner">
-      <div class="logo-area" onclick="resetFilter()">
+      <div class="logo" onclick="resetFilter()">
         <div class="logo-badge">⚡</div>
-        <div class="logo-text">Zepio<span>Games</span></div>
+        <div>Zepio<span>Games</span></div>
       </div>
 
-      <div class="search-wrapper">
+      <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Search games, engines, genres..." autocomplete="off">
-      </div>
-
-      <div class="header-tags" id="quickPlatformFilter">
-        <button class="pill-btn active" onclick="filterByPlatform('All')">All</button>
-        <button class="pill-btn" onclick="filterByPlatform('MakeCode')">MakeCode</button>
-        <button class="pill-btn" onclick="filterByPlatform('Scratch')">Scratch</button>
-        <button class="pill-btn" onclick="filterByPlatform('HTML5')">HTML5</button>
+        <input type="text" id="searchInput" placeholder="Search games...">
       </div>
     </div>
   </header>
 
-  <div class="app-shell">
-    <!-- CrazyGames Left Navigation Rail -->
+  <div class="app-layout">
+    <!-- Categories Sidebar -->
     <aside class="sidebar">
-      <div class="nav-label">Browse</div>
-      <a class="nav-item active" onclick="filterCategory('All')">
-        <span class="nav-icon">🔥</span>
-        <span>Popular</span>
-      </a>
-      <a class="nav-item" onclick="filterCategory('Action')">
-        <span class="nav-icon">⚔️</span>
+      <div class="nav-label">Discover</div>
+      <div class="nav-item active" onclick="filterCat('All')">
+        <span class="nav-emoji">🔥</span>
+        <span>All Games</span>
+      </div>
+      <div class="nav-item" onclick="filterCat('Action')">
+        <span class="nav-emoji">⚔️</span>
         <span>Action</span>
-      </a>
-      <a class="nav-item" onclick="filterCategory('Arcade')">
-        <span class="nav-icon">🕹️</span>
+      </div>
+      <div class="nav-item" onclick="filterCat('Arcade')">
+        <span class="nav-emoji">🕹️</span>
         <span>Arcade</span>
-      </a>
-      <a class="nav-item" onclick="filterCategory('Retro')">
-        <span class="nav-icon">👾</span>
+      </div>
+      <div class="nav-item" onclick="filterCat('Retro')">
+        <span class="nav-emoji">👾</span>
         <span>Retro</span>
-      </a>
-      <a class="nav-item" onclick="filterCategory('Puzzle')">
-        <span class="nav-icon">🧩</span>
+      </div>
+      <div class="nav-item" onclick="filterCat('Puzzle')">
+        <span class="nav-emoji">🧩</span>
         <span>Puzzle</span>
-      </a>
-      <a class="nav-item" onclick="filterCategory('Multiplayer')">
-        <span class="nav-icon">👥</span>
+      </div>
+      <div class="nav-item" onclick="filterCat('2 Player')">
+        <span class="nav-emoji">👥</span>
         <span>2 Player</span>
-      </a>
-
-      <div class="nav-label" style="margin-top: 16px;">Engines</div>
-      <a class="nav-item" onclick="filterByPlatform('MakeCode')">
-        <span class="nav-icon">🎛️</span>
-        <span>MakeCode</span>
-      </a>
-      <a class="nav-item" onclick="filterByPlatform('Scratch')">
-        <span class="nav-icon">🐱</span>
-        <span>TurboWarp</span>
-      </a>
-      <a class="nav-item" onclick="filterByPlatform('HTML5')">
-        <span class="nav-icon">🌐</span>
-        <span>HTML5 / JS</span>
-      </a>
+      </div>
+      <div class="nav-item" onclick="filterCat('Racing')">
+        <span class="nav-emoji">🏎️</span>
+        <span>Racing</span>
+      </div>
+      <div class="nav-item" onclick="filterCat('Adventure')">
+        <span class="nav-emoji">🏹</span>
+        <span>Adventure</span>
+      </div>
+      <div class="nav-item" onclick="filterCat('Shooter')">
+        <span class="nav-emoji">🎯</span>
+        <span>Shooter</span>
+      </div>
+      <div class="nav-item" onclick="filterCat('Sports')">
+        <span class="nav-emoji">⚽</span>
+        <span>Sports</span>
+      </div>
     </aside>
 
-    <!-- Main Game Viewport -->
-    <main class="main-viewport">
+    <!-- Main Game Feed -->
+    <main class="main-content">
       
-      <!-- AD SLOT: Header Leaderboard (728x90) -->
-      <!-- To activate: add class "has-ad" and paste your Google AdSense / GameDistribution tag inside -->
-      <div class="ad-slot-leaderboard" id="adSlotTop">
-        <!-- Ad tag placeholder -->
-      </div>
+      <!-- Hidden Ad Slot (Billboard 728x90) -->
+      <div class="ad-billboard" id="adTopSlot"></div>
 
-      <!-- Featured Hero Banner (CrazyGames style) -->
-      <div class="featured-hero" id="featuredHero">
-        <img class="hero-bg-img" id="heroBg" src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&auto=format&fit=crop&q=80" alt="Hero Game">
-        <div class="hero-content">
-          <div class="hero-tag">⚡ Game of the Day</div>
-          <h1 class="hero-title" id="heroTitle">Neon Ninja Quest</h1>
-          <p class="hero-desc" id="heroDesc">Experience 60 FPS platforming action through the neon underworld. Optimized for desktop and mobile web.</p>
-          <div class="hero-btn" id="heroPlayBtn">
-            <span>Play Now</span> ▶
-          </div>
+      <div class="feed-header">
+        <div class="feed-title">
+          <span id="categoryEmoji">🔥</span>
+          <span id="categoryTitle">All Games</span>
         </div>
       </div>
 
-      <!-- Main Feed -->
-      <div class="section-head">
-        <div class="section-title">
-          <span id="sectionTitleIcon">🎮</span>
-          <span id="sectionTitleText">All Games</span>
-        </div>
-      </div>
-
-      <div class="games-grid" id="gamesGrid">
-        <!-- Rendered via JS -->
-      </div>
+      <div class="games-grid" id="gamesGrid"></div>
     </main>
   </div>
 
-  <!-- Theater Mode Player Modal -->
-  <div class="theater-modal" id="theaterModal">
-    <div class="theater-container" id="theaterWindow">
-      <div class="theater-topbar">
-        <div class="game-meta-group">
-          <span class="game-name" id="modalGameTitle">Game Name</span>
-          <span class="card-badge badge-makecode" id="modalGameBadge">MakeCode</span>
-        </div>
-        <div class="game-controls-actions">
-          <button class="btn-action" onclick="reloadCurrentGame()">🔄 Restart</button>
-          <button class="btn-action" onclick="toggleFullScreen()">⛶ Fullscreen</button>
-          <button class="btn-action btn-close" onclick="closePlayer()">✕ Close</button>
+  <!-- Theater Player Modal -->
+  <div class="player-modal" id="playerModal">
+    <div class="player-window" id="playerWindow">
+      <div class="player-header">
+        <span class="game-name" id="activeGameTitle">Loading...</span>
+        <div class="player-controls">
+          <button class="btn-ctrl" onclick="reloadGame()">🔄 Restart</button>
+          <button class="btn-ctrl" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+          <button class="btn-ctrl btn-close" onclick="closePlayer()">✕ Close</button>
         </div>
       </div>
 
-      <div class="theater-main-stage">
-        <div class="stage-iframe-holder">
-          
-          <!-- Custom Zepio Loader (Covers iframe while loading) -->
-          <div class="zepio-shield-overlay" id="zepioLoader">
-            <div class="loader-ring"></div>
-            <div class="loader-text">Launching with Zepio Engine...</div>
-          </div>
-
-          <!-- Custom Zepio Error Guard (Shown if MakeCode / game server times out or fails) -->
-          <div class="zepio-error-state" id="zepioError">
-            <div class="error-shield-icon">⚠️</div>
-            <div class="error-shield-title">Unable to Launch Game</div>
-            <p class="error-shield-msg">The game could not connect to its server. This can happen if the link is unavailable or blocked by browser extensions.</p>
-            <button class="btn-retry" onclick="reloadCurrentGame()">
-              <span>Retry Launch</span> 🔄
-            </button>
-          </div>
-
-          <iframe id="gameIframe" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>
+      <div class="iframe-stage">
+        <!-- Zepio Loader -->
+        <div class="zepio-loader" id="zepioLoader">
+          <div class="loader-spin"></div>
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-muted);">Loading Game...</div>
         </div>
 
-        <!-- AD SLOT: Theater Side Skyscraper (300x250 or 300x600) -->
-        <!-- To activate: add class "has-ad" and paste your Ad script inside -->
-        <div class="ad-slot-theater-side" id="adSlotSide">
-          <!-- Side ad placeholder -->
+        <!-- Custom Zepio Error Screen -->
+        <div class="zepio-error-screen" id="zepioError">
+          <div class="err-icon">⚠️</div>
+          <div class="err-title">Game Not Found</div>
+          <div class="err-desc" id="errDescText">The game files could not be reached or the link has not been published yet.</div>
+          <button class="btn-ctrl" onclick="closePlayer()">Go Back to Games</button>
         </div>
-      </div>
 
-      <!-- AD SLOT: Under Player Banner (728x90) -->
-      <!-- To activate: add class "has-ad" and paste your Ad script inside -->
-      <div class="ad-slot-theater-bottom" id="adSlotBottom">
-        <!-- Bottom banner placeholder -->
+        <iframe id="gameIframe" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 
   <script>
-    let allGames = [];
+    let games = [];
     let currentCategory = 'All';
-    let currentPlatform = 'All';
-    let loadWatchdogTimer = null;
     let currentGame = null;
 
     async function init() {
       try {
         const res = await fetch('games.json');
-        if (!res.ok) throw new Error('games.json not found');
-        allGames = await res.json();
+        if (!res.ok) throw new Error('games.json missing');
+        games = await res.json();
       } catch (err) {
-        console.warn('Fallback data activated:', err);
-        allGames = [
-          {
-            id: 'space-runner',
-            title: 'Space Runner 2026',
-            category: 'Arcade',
-            platform: 'MakeCode',
-            thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-            url: 'https://arcade.makecode.com/---35398-35759-47043-44177',
-            description: 'Fast-paced space arcade game built with MakeCode.'
-          },
-          {
-            id: 'neon-ninja',
-            title: 'Neon Ninja Quest',
-            category: 'Action',
-            platform: 'Scratch',
-            thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80',
-            url: 'https://turbowarp.org/60917032/embed',
-            description: '60 FPS neon platformer powered by TurboWarp.'
-          },
-          {
-            id: 'retro-blaster',
-            title: 'Retro Blaster',
-            category: 'Retro',
-            platform: 'HTML5',
-            thumbnail: 'https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=600&auto=format&fit=crop&q=80',
-            url: './games/retro-blaster/index.html',
-            description: 'Custom standalone HTML5 arcade shooter.'
-          }
-        ];
+        console.log('No games loaded yet. Add games to games.json');
+        games = [];
       }
 
-      setupHero();
-      renderGames();
-      setupEvents();
+      renderGrid();
+      setupSearch();
     }
 
-    function setupHero() {
-      if (allGames.length === 0) return;
-      const hero = allGames[0];
-      document.getElementById('heroTitle').textContent = hero.title;
-      document.getElementById('heroDesc').textContent = hero.description;
-      document.getElementById('heroBg').src = hero.thumbnail;
-      document.getElementById('featuredHero').onclick = () => openGame(hero.id);
-    }
-
-    function renderGames() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    function renderGrid() {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
       const grid = document.getElementById('gamesGrid');
 
-      const filtered = allGames.filter(game => {
-        const matchesCategory = currentCategory === 'All' || game.category.toLowerCase() === currentCategory.toLowerCase();
-        const matchesPlatform = currentPlatform === 'All' || game.platform.toLowerCase() === currentPlatform.toLowerCase();
-        const matchesSearch = game.title.toLowerCase().includes(query) ||
-                              game.category.toLowerCase().includes(query) ||
-                              game.platform.toLowerCase().includes(query);
-        return matchesCategory && matchesPlatform && matchesSearch;
+      const filtered = games.filter(g => {
+        const matchCat = currentCategory === 'All' || g.category.toLowerCase() === currentCategory.toLowerCase();
+        const matchSearch = g.title.toLowerCase().includes(q) || g.category.toLowerCase().includes(q);
+        return matchCat && matchSearch;
       });
 
       if (filtered.length === 0) {
         grid.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
-            <div style="font-size: 40px; margin-bottom: 12px;">👾</div>
-            <h3>No Games Found</h3>
-            <p>Try switching category or clearing the search query.</p>
+          <div class="empty-box">
+            <div style="font-size: 40px; margin-bottom: 12px;">🕹️</div>
+            <h3>No Games Available</h3>
+            <p>Add your first game to games.json to see it here!</p>
           </div>
         `;
         return;
       }
 
-      grid.innerHTML = filtered.map(game => {
-        let badgeClass = 'badge-makecode';
-        if (game.platform.toLowerCase() === 'scratch') badgeClass = 'badge-scratch';
-        if (game.platform.toLowerCase() === 'html5') badgeClass = 'badge-html5';
-
-        return `
-          <div class="game-card" onclick="openGame('${game.id}')">
-            <div class="card-thumb">
-              <img src="${game.thumbnail}" alt="${game.title}" loading="lazy">
-              <span class="card-badge ${badgeClass}">${game.platform}</span>
-            </div>
-            <div class="card-body">
-              <div class="card-title">${game.title}</div>
-              <div class="card-foot">
-                <span>${game.category}</span>
-                <span>▶ Play Free</span>
-              </div>
+      grid.innerHTML = filtered.map(g => `
+        <div class="game-card" onclick="launchGame('${g.id}')">
+          <div class="card-thumb">
+            <img src="${g.thumbnail}" alt="${g.title}" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="card-title">${g.title}</div>
+            <div class="card-meta">
+              <span>${g.category}</span>
+              <span>▶ Play</span>
             </div>
           </div>
-        `;
-      }).join('');
+        </div>
+      `).join('');
     }
 
-    function filterCategory(cat) {
+    function filterCat(cat) {
       currentCategory = cat;
-      document.getElementById('sectionTitleText').textContent = cat === 'All' ? 'All Games' : `${cat} Games`;
+      document.getElementById('categoryTitle').textContent = cat === 'All' ? 'All Games' : `${cat} Games`;
       
-      document.querySelectorAll('.sidebar .nav-item').forEach(item => {
-        item.classList.toggle('active', item.textContent.trim().toLowerCase().includes(cat.toLowerCase()));
-      });
-      renderGames();
-    }
+      const emojis = {
+        'All': '🔥', 'Action': '⚔️', 'Arcade': '🕹️', 'Retro': '👾', 
+        'Puzzle': '🧩', '2 Player': '👥', 'Racing': '🏎️', 
+        'Adventure': '🏹', 'Shooter': '🎯', 'Sports': '⚽'
+      };
+      document.getElementById('categoryEmoji').textContent = emojis[cat] || '🎮';
 
-    function filterByPlatform(plat) {
-      currentPlatform = plat;
-      document.querySelectorAll('#quickPlatformFilter .pill-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.trim().toLowerCase() === plat.toLowerCase());
+      document.querySelectorAll('.sidebar .nav-item').forEach(el => {
+        el.classList.toggle('active', el.textContent.includes(cat));
       });
-      renderGames();
+
+      renderGrid();
     }
 
     function resetFilter() {
-      currentCategory = 'All';
-      currentPlatform = 'All';
       document.getElementById('searchInput').value = '';
-      filterCategory('All');
-      filterByPlatform('All');
+      filterCat('All');
     }
 
-    /* Modal & Game Error Guard */
-    function openGame(gameId) {
-      currentGame = allGames.find(g => g.id === gameId);
-      if (!currentGame) return;
-
-      document.getElementById('modalGameTitle').textContent = currentGame.title;
-      
-      const badge = document.getElementById('modalGameBadge');
-      badge.textContent = currentGame.platform;
-      badge.className = `card-badge ${
-        currentGame.platform.toLowerCase() === 'scratch' ? 'badge-scratch' :
-        currentGame.platform.toLowerCase() === 'html5' ? 'badge-html5' : 'badge-makecode'
-      }`;
-
-      const loader = document.getElementById('zepioLoader');
-      const errorScreen = document.getElementById('zepioError');
-      const iframe = document.getElementById('gameIframe');
-
-      // Reset states
-      loader.classList.remove('hidden');
-      errorScreen.classList.remove('visible');
-
-      // Set iframe source
-      iframe.src = currentGame.url;
-
-      // Watchdog Timer (if MakeCode takes over 9 seconds or stalls)
-      clearTimeout(loadWatchdogTimer);
-      loadWatchdogTimer = setTimeout(() => {
-        // If still visible after 9 seconds, show the Zepio branded error shield
-        if (!loader.classList.contains('hidden')) {
-          loader.classList.add('hidden');
-          errorScreen.classList.add('visible');
-        }
-      }, 9000);
-
-      // Handle successful load
-      iframe.onload = () => {
-        clearTimeout(loadWatchdogTimer);
-        // Short delay for visual smoothness
-        setTimeout(() => {
-          loader.classList.add('hidden');
-        }, 300);
-      };
-
-      document.getElementById('theaterModal').classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closePlayer() {
-      clearTimeout(loadWatchdogTimer);
-      const modal = document.getElementById('theaterModal');
-      modal.classList.remove('active');
-      
-      const iframe = document.getElementById('gameIframe');
-      iframe.src = '';
-      document.body.style.overflow = 'auto';
-
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-
-    function reloadCurrentGame() {
-      if (!currentGame) return;
-      openGame(currentGame.id);
-    }
-
-    function toggleFullScreen() {
-      const stage = document.getElementById('theaterWindow');
-      if (!document.fullscreenElement) {
-        stage.requestFullscreen().catch(err => console.error(err));
-      } else {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-
-    function setupEvents() {
-      document.getElementById('searchInput').addEventListener('input', renderGames);
+    function setupSearch() {
+      document.getElementById('searchInput').addEventListener('input', renderGrid);
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closePlayer();
       });
+    }
+
+    /* Modal & 404 Shield */
+    async function launchGame(id) {
+      currentGame = games.find(g => g.id === id);
+      if (!currentGame) return;
+
+      document.getElementById('activeGameTitle').textContent = currentGame.title;
+      const loader = document.getElementById('zepioLoader');
+      const errScreen = document.getElementById('zepioError');
+      const iframe = document.getElementById('gameIframe');
+
+      loader.classList.remove('hidden');
+      errScreen.classList.remove('visible');
+      document.getElementById('playerModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // 404 Shield for internal HTML games
+      if (currentGame.url.startsWith('./') || currentGame.url.startsWith('/')) {
+        try {
+          const check = await fetch(currentGame.url, { method: 'HEAD' });
+          if (!check.ok) {
+            loader.classList.add('hidden');
+            errScreen.classList.add('visible');
+            iframe.src = '';
+            return;
+          }
+        } catch (e) {
+          loader.classList.add('hidden');
+          errScreen.classList.add('visible');
+          iframe.src = '';
+          return;
+        }
+      }
+
+      iframe.src = currentGame.url;
+      iframe.onload = () => {
+        setTimeout(() => loader.classList.add('hidden'), 200);
+      };
+    }
+
+    function closePlayer() {
+      document.getElementById('playerModal').classList.remove('active');
+      document.getElementById('gameIframe').src = '';
+      document.body.style.overflow = 'auto';
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    }
+
+    function reloadGame() {
+      if (currentGame) launchGame(currentGame.id);
+    }
+
+    function toggleFullscreen() {
+      const target = document.getElementById('playerWindow');
+      if (!document.fullscreenElement) {
+        target.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
     }
 
     init();
