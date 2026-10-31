@@ -380,18 +380,17 @@
       display: block;
     }
 
-    /* Branded Animated Loader */
+    /* Branded Loading Overlay with Glass Plate */
     .zepio-loader {
       position: absolute;
       inset: 0;
       background: #090a10;
       z-index: 10;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 18px;
-      transition: opacity 0.35s ease, visibility 0.35s;
+      padding: 20px;
+      transition: opacity 0.4s ease, visibility 0.4s;
     }
 
     .zepio-loader.hidden {
@@ -400,30 +399,90 @@
       pointer-events: none;
     }
 
-    .loader-icon {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, #6366f1, #38bdf8);
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      font-size: 30px;
-      box-shadow: 0 0 35px var(--primary-glow);
-      animation: pulseIcon 1.5s ease-in-out infinite alternate;
+    /* Sleek Loading Plate */
+    .loading-plate {
+      background: rgba(18, 20, 31, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 32px 40px;
+      width: 100%;
+      max-width: 440px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px var(--primary-glow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    @keyframes pulseIcon {
-      from { transform: scale(0.95); box-shadow: 0 0 20px var(--primary-glow); }
-      to { transform: scale(1.06); box-shadow: 0 0 45px rgba(56, 189, 248, 0.6); }
+    .loading-plate::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
+    }
+
+    .plate-thumb-wrap {
+      width: 84px;
+      height: 84px;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .plate-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .plate-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .plate-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-elevated);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      margin-bottom: 22px;
+    }
+
+    .bar-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
     }
 
     .loader-bar-wrap {
-      width: 240px;
+      width: 100%;
       height: 6px;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 999px;
       overflow: hidden;
       position: relative;
+      margin-bottom: 12px;
     }
 
     .loader-bar-fill {
@@ -433,16 +492,16 @@
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #6366f1, #38bdf8);
-      box-shadow: 0 0 12px var(--accent);
+      box-shadow: 0 0 14px var(--accent);
       border-radius: 999px;
-      transition: width 0.25s ease-out;
+      transition: width 0.15s ease-out;
     }
 
     .loader-status {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
       color: var(--text-muted);
-      letter-spacing: 0.4px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
     }
 
     /* Branded Error Screen */
@@ -565,13 +624,24 @@
       </div>
 
       <div class="iframe-stage" id="iframeStage">
-        <!-- Zepio Branded Dynamic Loader -->
+        <!-- Zepio Branded Loader with Clean Plate -->
         <div class="zepio-loader" id="zepioLoader">
-          <div class="loader-icon">⚡</div>
-          <div class="loader-bar-wrap">
-            <div class="loader-bar-fill" id="loaderBarFill"></div>
+          <div class="loading-plate">
+            <div class="plate-thumb-wrap">
+              <img id="plateThumb" src="" alt="Game Poster">
+            </div>
+            <div class="plate-title" id="plateTitle">Game Title</div>
+            <div class="plate-badge" id="plateCategory">Arcade</div>
+
+            <div class="bar-row">
+              <span id="loaderStatus">Starting game engine...</span>
+              <span id="loaderPercent">0%</span>
+            </div>
+
+            <div class="loader-bar-wrap">
+              <div class="loader-bar-fill" id="loaderBarFill"></div>
+            </div>
           </div>
-          <div class="loader-status" id="loaderStatus">Initializing game engine...</div>
         </div>
 
         <!-- Custom Error Screen -->
@@ -592,6 +662,7 @@
     let currentCategory = 'All';
     let currentGame = null;
     let progressTimer = null;
+    let isIframeReady = false;
 
     async function init() {
       try {
@@ -674,40 +745,49 @@
       });
     }
 
-    /* Loading Progress Simulation */
+    /* Extended Smooth Loading Progress (~2.5s) */
     function startProgress() {
       const fill = document.getElementById('loaderBarFill');
       const status = document.getElementById('loaderStatus');
-      fill.style.width = '10%';
-      status.textContent = 'Allocating memory buffer...';
+      const percent = document.getElementById('loaderPercent');
 
-      let p = 10;
+      let currentVal = 0;
+      fill.style.width = '0%';
+      percent.textContent = '0%';
+      status.textContent = 'Initializing engine...';
+      isIframeReady = false;
+
       clearInterval(progressTimer);
+
       progressTimer = setInterval(() => {
-        if (p < 85) {
-          p += Math.floor(Math.random() * 15) + 5;
-          if (p > 85) p = 85;
-          fill.style.width = p + '%';
-          if (p > 40 && p < 70) status.textContent = 'Loading game assets...';
-          if (p >= 70) status.textContent = 'Finalizing canvas renderer...';
+        if (currentVal < 90) {
+          currentVal += Math.floor(Math.random() * 4) + 3; // Smooth small steps
+          if (currentVal > 90) currentVal = 90;
+
+          fill.style.width = currentVal + '%';
+          percent.textContent = currentVal + '%';
+
+          if (currentVal > 25 && currentVal < 60) status.textContent = 'Loading game assets...';
+          if (currentVal >= 60 && currentVal < 85) status.textContent = 'Synchronizing WebAssembly...';
+          if (currentVal >= 85) status.textContent = 'Preparing controls...';
+        } else if (isIframeReady) {
+          // Finish bar to 100%
+          clearInterval(progressTimer);
+          fill.style.width = '100%';
+          percent.textContent = '100%';
+          status.textContent = 'Ready! Launching...';
+
+          setTimeout(() => {
+            document.getElementById('zepioLoader').classList.add('hidden');
+            focusGame();
+            setTimeout(focusGame, 120);
+            setTimeout(focusGame, 300);
+          }, 350);
         }
-      }, 200);
+      }, 70); // ~2.2s total smooth duration
     }
 
-    function finishProgress(callback) {
-      clearInterval(progressTimer);
-      const fill = document.getElementById('loaderBarFill');
-      const status = document.getElementById('loaderStatus');
-      fill.style.width = '100%';
-      status.textContent = 'Ready! Focusing game...';
-
-      setTimeout(() => {
-        document.getElementById('zepioLoader').classList.add('hidden');
-        if (callback) callback();
-      }, 350);
-    }
-
-    /* Auto-focus to immediately route mouse & keyboard into the game */
+    /* Auto-focus on Game Canvas */
     function focusGame() {
       const iframe = document.getElementById('gameIframe');
       try {
@@ -732,6 +812,10 @@
       if (!currentGame) return;
 
       document.getElementById('activeGameTitle').textContent = currentGame.title;
+      document.getElementById('plateTitle').textContent = currentGame.title;
+      document.getElementById('plateCategory').textContent = currentGame.category;
+      document.getElementById('plateThumb').src = currentGame.thumbnail;
+
       const loader = document.getElementById('zepioLoader');
       const errScreen = document.getElementById('zepioError');
       const iframe = document.getElementById('gameIframe');
@@ -743,7 +827,7 @@
 
       startProgress();
 
-      // 404 Shield for internal relative paths
+      // 404 Shield for local files
       if (currentGame.url.startsWith('./') || currentGame.url.startsWith('/')) {
         try {
           const check = await fetch(currentGame.url, { method: 'HEAD' });
@@ -765,12 +849,7 @@
 
       iframe.src = currentGame.url;
       iframe.onload = () => {
-        finishProgress(() => {
-          focusGame();
-          // Secondary focus pulse to guarantee key-capture
-          setTimeout(focusGame, 100);
-          setTimeout(focusGame, 300);
-        });
+        isIframeReady = true;
       };
     }
 
