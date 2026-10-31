@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZepioGames — Онлайн игры</title>
+  <title>ZepioGames — Free Online Games</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@
       overflow-x: hidden;
     }
 
-    /* Навигация */
+    /* Navigation Header */
     header {
       background: rgba(12, 13, 20, 0.85);
       backdrop-filter: blur(14px);
@@ -67,6 +67,7 @@
       gap: 8px;
       text-decoration: none;
       cursor: pointer;
+      user-select: none;
     }
 
     .logo span {
@@ -108,7 +109,7 @@
       pointer-events: none;
     }
 
-    /* Категории */
+    /* Category Navigation */
     .categories-bar {
       max-width: 1400px;
       margin: 20px auto 0;
@@ -145,7 +146,7 @@
       box-shadow: 0 0 16px var(--accent-glow);
     }
 
-    /* Сетка игр */
+    /* Main Grid */
     main {
       max-width: 1400px;
       margin: 24px auto;
@@ -235,7 +236,7 @@
       justify-content: space-between;
     }
 
-    /* Модальное окно плеера */
+    /* Game Modal Player */
     .player-modal {
       position: fixed;
       inset: 0;
@@ -332,7 +333,6 @@
       border: none;
     }
 
-    /* Пустое состояние */
     .empty-state {
       grid-column: 1 / -1;
       text-align: center;
@@ -355,20 +355,18 @@
       <div class="logo" onclick="resetFilter()">⚡ <span>ZepioGames</span></div>
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Поиск игр...">
+        <input type="text" id="searchInput" placeholder="Search games...">
       </div>
     </div>
   </header>
 
-  <div class="categories-bar" id="categoriesBar">
-    <!-- Кнопки категорий генерируются через JS -->
-  </div>
+  <div class="categories-bar" id="categoriesBar"></div>
 
   <main>
     <div class="games-grid" id="gamesGrid"></div>
   </main>
 
-  <!-- Модалка с игрой -->
+  <!-- Player Modal -->
   <div class="player-modal" id="playerModal">
     <div class="player-window" id="playerWindow">
       <div class="player-header">
@@ -377,9 +375,9 @@
           <span class="platform-badge" id="activeGamePlatform">MakeCode</span>
         </div>
         <div class="player-actions">
-          <button class="action-btn" onclick="reloadCurrentGame()">🔄 Заново</button>
-          <button class="action-btn" onclick="toggleFullScreen()">⛶ Полный экран</button>
-          <button class="action-btn close-btn" onclick="closePlayer()">✕ Закрыть</button>
+          <button class="action-btn" onclick="reloadCurrentGame()">🔄 Restart</button>
+          <button class="action-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+          <button class="action-btn close-btn" onclick="closePlayer()">✕ Close</button>
         </div>
       </div>
       <div class="iframe-box">
@@ -390,24 +388,24 @@
 
   <script>
     let allGames = [];
-    let activeCategory = 'Все';
+    let activeCategory = 'All';
 
     async function init() {
       try {
         const response = await fetch('games.json');
-        if (!response.ok) throw new Error('Не удалось загрузить games.json');
+        if (!response.ok) throw new Error('games.json not found');
         allGames = await response.json();
       } catch (err) {
-        console.warn('Загружаем резервный список, так как games.json еще не найден локально:', err);
+        console.warn('Fallback data used (games.json not loaded yet):', err);
         allGames = [
           {
-            id: 'sample-makecode',
-            title: 'Sample MakeCode',
+            id: 'sample-game',
+            title: 'Sample Game',
             category: 'Arcade',
             platform: 'MakeCode',
             thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
             url: 'https://arcade.makecode.com/---35398-35759-47043-44177',
-            description: 'Демонстрационная игра'
+            description: 'Demo game placeholder.'
           }
         ];
       }
@@ -418,7 +416,7 @@
     }
 
     function setupCategories() {
-      const categories = ['Все', ...new Set(allGames.map(g => g.category))];
+      const categories = ['All', ...new Set(allGames.map(g => g.category))];
       const container = document.getElementById('categoriesBar');
       container.innerHTML = categories.map(cat => `
         <button class="cat-btn ${cat === activeCategory ? 'active' : ''}" onclick="filterByCategory('${cat}')">
@@ -434,7 +432,7 @@
     }
 
     function resetFilter() {
-      activeCategory = 'Все';
+      activeCategory = 'All';
       document.getElementById('searchInput').value = '';
       setupCategories();
       renderGames();
@@ -445,7 +443,7 @@
       const grid = document.getElementById('gamesGrid');
 
       const filtered = allGames.filter(game => {
-        const matchCat = activeCategory === 'Все' || game.category === activeCategory;
+        const matchCat = activeCategory === 'All' || game.category === activeCategory;
         const matchSearch = game.title.toLowerCase().includes(query) || 
                             game.platform.toLowerCase().includes(query) ||
                             game.category.toLowerCase().includes(query);
@@ -453,7 +451,12 @@
       });
 
       if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty-state"><h3>Игры не найдены 🎮</h3><p>Попробуй сбросить фильтры или изменить поиск</p></div>`;
+        grid.innerHTML = `
+          <div class="empty-state">
+            <h3>No games found 🎮</h3>
+            <p>Try clearing your search query or selecting a different category.</p>
+          </div>
+        `;
         return;
       }
 
@@ -475,8 +478,6 @@
 
     function setupEvents() {
       document.getElementById('searchInput').addEventListener('input', renderGames);
-      
-      // Закрытие по клавише Escape
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closePlayer();
       });
@@ -509,15 +510,15 @@
 
     function reloadCurrentGame() {
       const iframe = document.getElementById('gameIframe');
-      const cur = iframe.src;
+      const currentUrl = iframe.src;
       iframe.src = '';
-      setTimeout(() => { iframe.src = cur; }, 100);
+      setTimeout(() => { iframe.src = currentUrl; }, 100);
     }
 
     function toggleFullScreen() {
       const target = document.getElementById('playerWindow');
       if (!document.fullscreenElement) {
-        target.requestFullscreen().catch(err => alert('Ошибка полного экрана: ' + err.message));
+        target.requestFullscreen().catch(err => alert('Fullscreen error: ' + err.message));
       } else {
         document.exitFullscreen().catch(() => {});
       }
