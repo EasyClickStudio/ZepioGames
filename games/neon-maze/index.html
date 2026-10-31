@@ -327,7 +327,7 @@ function playTone(freq, dur, type='sine', vol=0.12) {
   } catch(e) {}
 }
 
-// Input: Arrows + Shift
+// Input: WASD & Arrow Keys + Shift
 const keys = {};
 window.addEventListener('keydown', e => {
   initAudio();
@@ -594,10 +594,10 @@ function update(dt) {
   document.getElementById('dash-bar').style.width = `${dashPct}%`;
 
   let dx = 0, dy = 0;
-  if (keys['ArrowLeft']) dx -= 1;
-  if (keys['ArrowRight']) dx += 1;
-  if (keys['ArrowUp']) dy -= 1;
-  if (keys['ArrowDown']) dy += 1;
+  if (keys['ArrowLeft'] || keys['KeyA']) dx -= 1;
+  if (keys['ArrowRight'] || keys['KeyD']) dx += 1;
+  if (keys['ArrowUp'] || keys['KeyW']) dy -= 1;
+  if (keys['ArrowDown'] || keys['KeyS']) dy += 1;
 
   if (dx !== 0 && dy !== 0) {
     dx *= 0.7071;
