@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Neon Maze Runner - Ultimate Display</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap');
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  body, html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #020408;
+    font-family: 'Orbitron', sans-serif;
+    color: #e2f1ff;
+  }
+
+  /* Responsive Floating Pill HUD */
+  #hud {
+    position: fixed;
+    top: clamp(10px, 2vh, 28px);
+    left: 0;
+    width: 100%;
+    height: clamp(44px, 5.5vh, 60px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(16px, 4vw, 60px);
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.2vw, 18px);
+    background: rgba(7, 11, 24, 0.92);
+    padding: clamp(6px, 1vh, 12px) clamp(12px, 1.6vw, 24px);
+    border-radius: 999px;
+    backdrop-filter: blur(10px);
+    font-size: clamp(12px, 1.2vw, 18px);
+    letter-spacing: 1px;
+    pointer-events: auto;
+  }
+
+  .pill-cyan {
+    border: 1px solid rgba(0, 243, 255, 0.55);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
+  }
+
+  .pill-gold {
+    border: 1px solid rgba(255, 215, 0, 0.55);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.22), inset 0 0 10px rgba(255, 215, 0, 0.1);
+  }
+
+  .pill-pink {
+    border: 1px solid rgba(255, 0, 127, 0.55);
+    box-shadow: 0 0 20px rgba(255, 0, 127, 0.2), inset 0 0 10px rgba(255, 0, 127, 0.1);
+  }
+
+  .dot-cyan {
+    width: clamp(8px, 0.8vw, 12px);
+    height: clamp(8px, 0.8vw, 12px);
+    border-radius: 50%;
+    background: #00f3ff;
+    box-shadow: 0 0 10px #00f3ff;
+  }
+
+  .sector-txt {
+    color: #00f3ff;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+  }
+
+  .divider {
+    color: rgba(255, 255, 255, 0.22);
+  }
+
+  .hearts {
+    display: flex;
+    gap: clamp(4px, 0.5vw, 8px);
+    font-size: clamp(14px, 1.5vw, 22px);
+  }
+
+  .heart {
+    color: #ff006a;
+    text-shadow: 0 0 12px #ff006a;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .heart.lost {
+    color: #1a2233;
+    text-shadow: none;
+    opacity: 0.35;
+  }
+
+  .lbl {
+    font-family: 'Share Tech Mono', monospace;
+    color: #8da4c4;
+    font-size: clamp(11px, 1.0vw, 15px);
+  }
+
+  .val-gold {
+    color: #ffd700;
+    font-weight: 900;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.9);
+  }
+
+  .val-green {
+    color: #00ffaa;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(0, 255, 170, 0.8);
+  }
+
+  .dash-lbl {
+    font-family: 'Share Tech Mono', monospace;
+    color: #ff5599;
+    font-size: clamp(10px, 0.9vw, 14px);
+  }
+
+  .dash-bar-bg {
+    width: clamp(65px, 8vw, 130px);
+    height: clamp(7px, 1vh, 12px);
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .dash-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff006a, #00f3ff);
+    box-shadow: 0 0 12px #00f3ff;
+  }
+
+  .right-group {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1vw, 14px);
+  }
+
+  #mute-btn {
+    cursor: pointer;
+    padding: clamp(6px, 1vh, 12px) clamp(10px, 1.2vw, 16px);
+    color: #00f3ff;
+    font-size: clamp(13px, 1.2vw, 18px);
+  }
+
+  /* Game Over Modal */
+  #game-over {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 4, 8, 0.88);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+  }
+
+  .modal-card {
+    background: rgba(8, 12, 24, 0.98);
+    border: 2px solid #ff006a;
+    box-shadow: 0 0 45px rgba(255, 0, 106, 0.4), inset 0 0 25px rgba(255, 0, 106, 0.15);
+    border-radius: 20px;
+    padding: clamp(24px, 4vh, 48px) clamp(30px, 4vw, 64px);
+    text-align: center;
+    max-width: 90vw;
+  }
+
+  .modal-title {
+    font-size: clamp(24px, 3.2vw, 44px);
+    color: #ff006a;
+    text-shadow: 0 0 20px #ff006a;
+    margin-bottom: 12px;
+    letter-spacing: 3px;
+  }
+
+  .modal-stats {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(14px, 1.4vw, 20px);
+    color: #d0e4ff;
+    margin-bottom: 20px;
+  }
+
+  .countdown {
+    font-size: clamp(38px, 4.5vw, 64px);
+    color: #ffd700;
+    text-shadow: 0 0 25px #ffd700;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+
+  .reboot-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(11px, 1.1vw, 15px);
+    color: #7c93b6;
+    margin-bottom: 22px;
+  }
+
+  .prompt-txt {
+    font-size: clamp(12px, 1.2vw, 16px);
+    color: #00f3ff;
+    text-shadow: 0 0 10px #00f3ff;
+    letter-spacing: 2px;
+  }
+
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
+</head>
+<body>
+
+<div id="hud">
+  <div class="pill pill-cyan">
+    <div class="dot-cyan"></div>
+    <span class="sector-txt" id="sector-txt">SECTOR 01</span>
+    <span class="divider">|</span>
+    <div class="hearts" id="hearts-box">
+      <span class="heart">♥</span>
+      <span class="heart">♥</span>
+      <span class="heart">♥</span>
+    </div>
+  </div>
+
+  <div class="pill pill-gold">
+    <span style="color:#ffd700; text-shadow:0 0 12px #ffd700;">⚡</span>
+    <span class="lbl">CORES:</span>
+    <span class="val-gold" id="cores-txt">0/1</span>
+    <span class="divider">|</span>
+    <span class="lbl">SCORE:</span>
+    <span class="val-green" id="score-txt">0000</span>
+  </div>
+
+  <div class="right-group">
+    <div class="pill pill-pink">
+      <span class="dash-lbl">DASH [SHIFT]</span>
+      <div class="dash-bar-bg">
+        <div class="dash-bar-fill" id="dash-bar"></div>
+      </div>
+    </div>
+    <div class="pill pill-cyan" id="mute-btn" onclick="toggleAudio()">🔊</div>
+  </div>
+</div>
+
+<div id="game-over">
+  <div class="modal-card">
+    <div class="modal-title">SYSTEM FAILURE</div>
+    <div class="modal-stats" id="final-stats">TERMINATED IN SECTOR 01 | SCORE: 0000</div>
+    <div class="countdown" id="countdown-txt">5.0s</div>
+    <div class="reboot-sub">AUTO REBOOTING SECTOR 01...</div>
+    <div class="prompt-txt">PRESS [SHIFT] OR [ENTER] TO REBOOT NOW</div>
+  </div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+const COLS = 21;
+const ROWS = 13;
+let TILE = 56;
+let OFFSET_X = 0;
+let OFFSET_Y = 0;
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.floor(window.innerWidth * dpr);
+  canvas.height = Math.floor(window.innerHeight * dpr);
+  
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+
+  const cssW = window.innerWidth;
+  const cssH = window.innerHeight;
+
+  const hudReserve = Math.max(76, cssH * 0.12);
+  const paddingX = Math.max(30, cssW * 0.05);
+  const paddingY = Math.max(20, cssH * 0.04);
+
+  const availW = cssW - paddingX * 2;
+  const availH = cssH - hudReserve - paddingY * 2;
+
+  TILE = Math.floor(Math.min(availW / COLS, availH / ROWS));
+  OFFSET_X = Math.floor((cssW - COLS * TILE) / 2);
+  OFFSET_Y = Math.floor(hudReserve + (availH - ROWS * TILE) / 2 + paddingY);
+}
+window.addEventListener('resize', resize);
+
+// Web Audio Synthesizer
+let audioCtx = null;
+let muted = false;
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function toggleAudio() {
+  muted = !muted;
+  document.getElementById('mute-btn').textContent = muted ? '🔇' : '🔊';
+}
+function playTone(freq, dur, type='sine', vol=0.12) {
+  if (muted) return;
+  try {
+    initAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+
+// Input: Arrows + Shift
+const keys = {};
+window.addEventListener('keydown', e => {
+  initAudio();
+  keys[e.code] = true;
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+    if (state === 'PLAYING') triggerDash();
+    else if (state === 'GAMEOVER') restartGame();
+  }
+  if (e.code === 'Enter' && state === 'GAMEOVER') restartGame();
+  if (e.code === 'KeyM') toggleAudio();
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// Game State
+let state = 'PLAYING';
+let sector = 1;
+let score = 0;
+let gameOverTimer = 5.0;
+
+let grid = [];
+let cores = [];
+let totalCores = 1;
+let exitPos = {x: 1, y: 1};
+let patrols = [];
+let bouncers = [];
+let spikes = [];
+let particles = [];
+
+const player = {
+  gx: 1.5, gy: 1.5,
+  angle: 0,
+  hp: 3, maxHp: 3,
+  dashTime: 0,
+  dashCd: 0,
+  invuln: 0,
+  trail: []
+};
+
+function generateMaze(sec) {
+  sector = sec;
+  grid = Array.from({length: ROWS}, () => Array(COLS).fill(1));
+
+  function carve(cx, cy) {
+    const dirs = [[0,-2],[0,2],[-2,0],[2,0]].sort(() => Math.random() - 0.5);
+    for (const [dx, dy] of dirs) {
+      const nx = cx + dx, ny = cy + dy;
+      if (nx > 0 && nx < COLS-1 && ny > 0 && ny < ROWS-1 && grid[ny][nx] === 1) {
+        grid[cy + dy/2][cx + dx/2] = 0;
+        grid[ny][nx] = 0;
+        carve(nx, ny);
+      }
+    }
+  }
+  grid[1][1] = 0;
+  carve(1, 1);
+
+  // Braiding
+  for (let r = 2; r < ROWS - 2; r++) {
+    for (let c = 2; c < COLS - 2; c++) {
+      if (grid[r][c] === 1) {
+        if ((grid[r][c-1] === 0 && grid[r][c+1] === 0 && Math.random() < 0.36) ||
+            (grid[r-1][c] === 0 && grid[r+1][c] === 0 && Math.random() < 0.36)) {
+          grid[r][c] = 0;
+        }
+      }
+    }
+  }
+
+  // Reachability BFS
+  const reachable = [];
+  const visited = new Set(['1,1']);
+  const queue = [[1, 1]];
+  while (queue.length > 0) {
+    const [cx, cy] = queue.shift();
+    reachable.push({x: cx, y: cy});
+    for (const [dx, dy] of [[0,1],[0,-1],[1,0],[-1,0]]) {
+      const nx = cx + dx, ny = cy + dy;
+      const key = `${nx},${ny}`;
+      if (nx > 0 && nx < COLS-1 && ny > 0 && ny < ROWS-1 && grid[ny][nx] === 0 && !visited.has(key)) {
+        visited.add(key);
+        queue.push([nx, ny]);
+      }
+    }
+  }
+
+  player.gx = 1.5;
+  player.gy = 1.5;
+  player.dashTime = 0;
+  player.trail = [];
+
+  let avail = reachable.filter(p => Math.hypot(p.x - 1, p.y - 1) > 3.5);
+  avail.sort((a, b) => Math.hypot(b.x - 1, b.y - 1) - Math.hypot(a.x - 1, a.y - 1));
+  exitPos = avail.shift();
+
+  avail.sort(() => Math.random() - 0.5);
+
+  totalCores = Math.min(3, 1 + Math.floor((sector - 1) / 2));
+  const numPatrols = Math.min(4, sector);
+  const numBouncers = sector === 1 ? 0 : Math.min(3, sector - 1);
+  const numSpikes = Math.min(4, sector);
+
+  cores = [];
+  for (let i = 0; i < totalCores && avail.length; i++) cores.push(avail.pop());
+
+  spikes = [];
+  for (let i = 0; i < numSpikes && avail.length; i++) {
+    const p = avail.pop();
+    spikes.push({x: p.x, y: p.y, timer: Math.random() * 3.2, interval: 3.2});
+  }
+
+  patrols = [];
+  for (let i = 0; i < numPatrols; i++) {
+    const rail = findRail(avail);
+    if (rail) {
+      patrols.push({
+        track: rail,
+        prog: 0,
+        fwd: true,
+        speed: 1.3 + sector * 0.15,
+        gx: rail[0].x + 0.5,
+        gy: rail[0].y + 0.5
+      });
+    }
+  }
+
+  bouncers = [];
+  for (let i = 0; i < numBouncers && avail.length; i++) {
+    const p = avail.pop();
+    const ang = [Math.PI/4, 3*Math.PI/4, 5*Math.PI/4, 7*Math.PI/4][Math.floor(Math.random()*4)];
+    const spd = 1.9 + sector * 0.18;
+    bouncers.push({
+      gx: p.x + 0.5, gy: p.y + 0.5,
+      vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd
+    });
+  }
+
+  updateHUD();
+}
+
+function findRail(avail) {
+  for (let i = 0; i < avail.length; i++) {
+    const p = avail[i];
+    for (const horiz of [true, false]) {
+      const path = [];
+      for (let d = -2; d <= 2; d++) {
+        const nx = horiz ? p.x + d : p.x;
+        const ny = horiz ? p.y : p.y + d;
+        if (nx > 0 && nx < COLS-1 && ny > 0 && ny < ROWS-1 && grid[ny][nx] === 0) {
+          path.push({x: nx, y: ny});
+        } else break;
+      }
+      if (path.length >= 3) {
+        for (const pt of path) {
+          const idx = avail.findIndex(a => a.x === pt.x && a.y === pt.y);
+          if (idx !== -1) avail.splice(idx, 1);
+        }
+        return path;
+      }
+    }
+  }
+  return null;
+}
+
+function triggerDash() {
+  if (player.dashCd <= 0) {
+    player.dashTime = 0.16;
+    player.dashCd = 2.0;
+    player.invuln = 0.35;
+    playTone(600, 0.14, 'sine', 0.16);
+  }
+}
+
+function spawnParticles(gx, gy, color, count=20) {
+  for (let i = 0; i < count; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const spd = 1.2 + Math.random() * 4.0;
+    particles.push({
+      gx, gy,
+      vx: Math.cos(ang) * spd,
+      vy: Math.sin(ang) * spd,
+      color,
+      life: 0.65, maxLife: 0.65
+    });
+  }
+}
+
+function damagePlayer() {
+  if (player.invuln > 0 || player.dashTime > 0) return;
+  player.hp--;
+  player.invuln = 1.2;
+  playTone(110, 0.3, 'sawtooth', 0.2);
+  spawnParticles(player.gx, player.gy, '#ff006a', 26);
+  updateHUD();
+
+  if (player.hp <= 0) {
+    state = 'GAMEOVER';
+    gameOverTimer = 5.0;
+    document.getElementById('final-stats').textContent =
+      `TERMINATED IN SECTOR ${String(sector).padStart(2,'0')} | SCORE: ${String(score).padStart(4,'0')}`;
+    document.getElementById('game-over').style.display = 'flex';
+  }
+}
+
+function restartGame() {
+  score = 0;
+  player.hp = 3;
+  state = 'PLAYING';
+  document.getElementById('game-over').style.display = 'none';
+  generateMaze(1);
+}
+
+function updateHUD() {
+  document.getElementById('sector-txt').textContent = `SECTOR ${String(sector).padStart(2, '0')}`;
+  const collected = totalCores - cores.length;
+  document.getElementById('cores-txt').textContent = `${collected}/${totalCores}`;
+  document.getElementById('score-txt').textContent = String(score).padStart(4, '0');
+
+  const hearts = document.querySelectorAll('.heart');
+  hearts.forEach((h, idx) => {
+    if (idx < player.hp) h.classList.remove('lost');
+    else h.classList.add('lost');
+  });
+}
+
+function canMove(ngx, ngy, r=0.26) {
+  const checks = [[ngx-r, ngy], [ngx+r, ngy], [ngx, ngy-r], [ngx, ngy+r]];
+  for (const [cx, cy] of checks) {
+    const tx = Math.floor(cx), ty = Math.floor(cy);
+    if (tx < 0 || tx >= COLS || ty < 0 || ty >= ROWS || grid[ty][tx] === 1) return false;
+  }
+  return true;
+}
+
+let lastTime = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - lastTime) / 1000);
+  lastTime = now;
+
+  update(dt);
+  draw(now);
+  requestAnimationFrame(loop);
+}
+
+function update(dt) {
+  particles = particles.filter(p => {
+    p.gx += p.vx * dt;
+    p.gy += p.vy * dt;
+    p.life -= dt;
+    return p.life > 0;
+  });
+
+  if (state === 'GAMEOVER') {
+    gameOverTimer -= dt;
+    document.getElementById('countdown-txt').textContent = `${Math.max(0, gameOverTimer).toFixed(1)}s`;
+    if (gameOverTimer <= 0) restartGame();
+    return;
+  }
+
+  if (player.dashCd > 0) player.dashCd = Math.max(0, player.dashCd - dt);
+  if (player.invuln > 0) player.invuln = Math.max(0, player.invuln - dt);
+  if (player.dashTime > 0) player.dashTime = Math.max(0, player.dashTime - dt);
+
+  const dashPct = Math.max(0, 1 - player.dashCd / 2.0) * 100;
+  document.getElementById('dash-bar').style.width = `${dashPct}%`;
+
+  let dx = 0, dy = 0;
+  if (keys['ArrowLeft']) dx -= 1;
+  if (keys['ArrowRight']) dx += 1;
+  if (keys['ArrowUp']) dy -= 1;
+  if (keys['ArrowDown']) dy += 1;
+
+  if (dx !== 0 && dy !== 0) {
+    dx *= 0.7071;
+    dy *= 0.7071;
+  }
+  if (dx !== 0 || dy !== 0) {
+    player.angle = Math.atan2(dy, dx);
+  }
+
+  const baseSpd = 3.9;
+  const spd = player.dashTime > 0 ? baseSpd * 3.2 : baseSpd;
+  const mx = (player.dashTime > 0 ? Math.cos(player.angle) : dx) * spd * dt;
+  const my = (player.dashTime > 0 ? Math.sin(player.angle) : dy) * spd * dt;
+
+  if (canMove(player.gx + mx, player.gy)) player.gx += mx;
+  if (canMove(player.gx, player.gy + my)) player.gy += my;
+
+  // Trail only when moving
+  if ((Math.abs(mx) > 0.001 || Math.abs(my) > 0.001) && (player.dashTime > 0 || Math.random() < 0.35)) {
+    player.trail.push({gx: player.gx, gy: player.gy, alpha: 0.8, scale: 1.0});
+  }
+  player.trail.forEach(t => {
+    t.alpha -= dt * 3.0;
+    t.scale = Math.max(0.3, t.scale - dt * 1.5);
+  });
+  player.trail = player.trail.filter(t => t.alpha > 0);
+
+  // Patrols
+  for (const p of patrols) {
+    const segs = p.track.length - 1;
+    const step = (p.speed * dt) / segs;
+    p.prog += p.fwd ? step : -step;
+    if (p.prog >= 1) { p.prog = 1; p.fwd = false; }
+    if (p.prog <= 0) { p.prog = 0; p.fwd = true; }
+    const idx = Math.min(segs - 1, Math.floor(p.prog * segs));
+    const t = (p.prog * segs) - idx;
+    p.gx = p.track[idx].x + (p.track[idx+1].x - p.track[idx].x) * t + 0.5;
+    p.gy = p.track[idx].y + (p.track[idx+1].y - p.track[idx].y) * t + 0.5;
+
+    if (Math.hypot(player.gx - p.gx, player.gy - p.gy) < 0.45) damagePlayer();
+  }
+
+  // Bouncers
+  for (const b of bouncers) {
+    const nx = b.gx + b.vx * dt;
+    if (grid[Math.floor(b.gy)][Math.floor(nx)] === 0) b.gx = nx;
+    else b.vx *= -1;
+
+    const ny = b.gy + b.vy * dt;
+    if (grid[Math.floor(ny)][Math.floor(b.gx)] === 0) b.gy = ny;
+    else b.vy *= -1;
+
+    if (Math.hypot(player.gx - b.gx, player.gy - b.gy) < 0.45) damagePlayer();
+  }
+
+  // Spikes
+  for (const s of spikes) {
+    s.timer = (s.timer + dt) % s.interval;
+    const phase = s.timer / s.interval;
+    if (phase >= 0.75) {
+      if (Math.abs(player.gx - (s.x + 0.5)) < 0.38 && Math.abs(player.gy - (s.y + 0.5)) < 0.38) {
+        damagePlayer();
+      }
+    }
+  }
+
+  // Cores
+  for (let i = cores.length - 1; i >= 0; i--) {
+    const c = cores[i];
+    if (Math.hypot(player.gx - (c.x + 0.5), player.gy - (c.y + 0.5)) < 0.5) {
+      cores.splice(i, 1);
+      score += 250;
+      playTone(880, 0.18, 'sine', 0.16);
+      spawnParticles(c.x + 0.5, c.y + 0.5, '#ffd700', 24);
+      updateHUD();
+    }
+  }
+
+  // Exit Portal
+  if (cores.length === 0) {
+    if (Math.hypot(player.gx - (exitPos.x + 0.5), player.gy - (exitPos.y + 0.5)) < 0.5) {
+      score += 750;
+      playTone(720, 0.35, 'sine', 0.2);
+      spawnParticles(exitPos.x + 0.5, exitPos.y + 0.5, '#00ffaa', 32);
+      generateMaze(sector + 1);
+    }
+  }
+}
+
+function draw(now) {
+  ctx.fillStyle = '#020408';
+  ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+  const px = OFFSET_X + player.gx * TILE;
+  const py = OFFSET_Y + player.gy * TILE;
+  const lightRad = TILE * 4.6;
+
+  // 1. Maze Walls & Floors
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const tx = OFFSET_X + c * TILE;
+      const ty = OFFSET_Y + r * TILE;
+      const dist = Math.hypot((tx + TILE/2) - px, (ty + TILE/2) - py);
+      const intensity = Math.max(0, 1 - dist / lightRad);
+
+      if (grid[r][c] === 1) {
+        ctx.fillStyle = '#050812';
+        ctx.fillRect(tx, ty, TILE, TILE);
+
+        const alpha = 0.08 + Math.pow(intensity, 1.7) * 0.85;
+        ctx.strokeStyle = `rgba(0, 243, 255, ${alpha})`;
+        ctx.lineWidth = intensity > 0.2 ? 2.5 : 1;
+
+        if (intensity > 0.22) {
+          ctx.shadowColor = '#00f3ff';
+          ctx.shadowBlur = Math.min(22, 16 * intensity * (TILE / 50));
+        } else {
+          ctx.shadowBlur = 0;
+        }
+        ctx.strokeRect(tx + 1, ty + 1, TILE - 2, TILE - 2);
+        ctx.shadowBlur = 0;
+      } else {
+        ctx.strokeStyle = `rgba(0, 243, 255, ${0.02 + intensity * 0.05})`;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(tx, ty, TILE, TILE);
+      }
+    }
+  }
+
+  // 2. Spikes
+  for (const s of spikes) {
+    const sx = OFFSET_X + s.x * TILE;
+    const sy = OFFSET_Y + s.y * TILE;
+    const phase = s.timer / s.interval;
+    ctx.save();
+    if (phase < 0.55) {
+      ctx.strokeStyle = 'rgba(255, 0, 106, 0.16)';
+      ctx.strokeRect(sx + 7, sy + 7, TILE - 14, TILE - 14);
+    } else if (phase < 0.75) {
+      ctx.strokeStyle = 'rgba(255, 190, 0, 0.8)';
+      ctx.shadowColor = '#ffbe00';
+      ctx.shadowBlur = 12;
+      ctx.strokeRect(sx + 6, sy + 6, TILE - 12, TILE - 12);
+    } else {
+      ctx.fillStyle = 'rgba(255, 0, 106, 0.35)';
+      ctx.strokeStyle = '#ff006a';
+      ctx.shadowColor = '#ff006a';
+      ctx.shadowBlur = 18;
+      ctx.fillRect(sx + 6, sy + 6, TILE - 12, TILE - 12);
+      ctx.strokeRect(sx + 6, sy + 6, TILE - 12, TILE - 12);
+    }
+    ctx.restore();
+  }
+
+  // 3. Exit Portal
+  const ex = OFFSET_X + (exitPos.x + 0.5) * TILE;
+  const ey = OFFSET_Y + (exitPos.y + 0.5) * TILE;
+  const active = cores.length === 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(ex, ey, TILE * 0.32, 0, Math.PI * 2);
+  ctx.strokeStyle = active ? '#00ffaa' : 'rgba(0, 243, 255, 0.2)';
+  ctx.lineWidth = 3;
+  if (active) {
+    ctx.shadowColor = '#00ffaa';
+    ctx.shadowBlur = 24;
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // 4. Energy Cores (SUPER BRIGHT GLOW WITH VOLUMETRIC AURA)
+  for (const c of cores) {
+    const cx = OFFSET_X + (c.x + 0.5) * TILE;
+    const cy = OFFSET_Y + (c.y + 0.5) * TILE;
+    const dist = Math.hypot(cx - px, cy - py);
+    const vis = Math.max(0.35, 1 - dist / (lightRad * 1.4));
+    const pulse = 1.0 + 0.25 * Math.sin(now * 0.008);
+    const coreR = Math.max(7, TILE * 0.16) * pulse;
+
+    ctx.save();
+    ctx.globalAlpha = vis;
+
+    // Outer Large Radiant Flare
+    const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, coreR * 3.6);
+    grad.addColorStop(0, 'rgba(255, 230, 0, 0.6)');
+    grad.addColorStop(0.4, 'rgba(255, 180, 0, 0.25)');
+    grad.addColorStop(1, 'rgba(255, 140, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreR * 3.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Intense Double Neon Bloom
+    ctx.shadowColor = '#ffea00';
+    ctx.shadowBlur = 35;
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Hot White Diamond Core
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreR * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // 5. Patrol Drones
+  for (const p of patrols) {
+    const dx = OFFSET_X + p.gx * TILE;
+    const dy = OFFSET_Y + p.gy * TILE;
+    const dist = Math.hypot(dx - px, dy - py);
+    const vis = Math.max(0.2, 1 - dist / (lightRad * 1.3));
+
+    ctx.save();
+    ctx.globalAlpha = vis;
+    ctx.strokeStyle = '#ff006a';
+    ctx.shadowColor = '#ff006a';
+    ctx.shadowBlur = 16;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(dx, dy, TILE * 0.22, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ff006a';
+    ctx.beginPath();
+    ctx.arc(dx, dy, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 6. Bouncing Orbs
+  for (const b of bouncers) {
+    const bx = OFFSET_X + b.gx * TILE;
+    const by = OFFSET_Y + b.gy * TILE;
+    const dist = Math.hypot(bx - px, by - py);
+    const vis = Math.max(0.2, 1 - dist / (lightRad * 1.3));
+
+    ctx.save();
+    ctx.globalAlpha = vis;
+    ctx.strokeStyle = '#ff8800';
+    ctx.shadowColor = '#ff8800';
+    ctx.shadowBlur = 16;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(bx, by, TILE * 0.2, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 7. Player Hollow Trail (Thin, sleek rings)
+  for (const t of player.trail) {
+    const tx = OFFSET_X + t.gx * TILE;
+    const ty = OFFSET_Y + t.gy * TILE;
+    ctx.save();
+    ctx.strokeStyle = `rgba(0, 243, 255, ${t.alpha * 0.5})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(tx, ty, (TILE * 0.16) * t.scale, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 8. Player Avatar
+  if (!(player.invuln > 0 && Math.floor(now / 60) % 2 === 0)) {
+    const r = TILE * 0.25;
+    ctx.save();
+    ctx.strokeStyle = '#00f3ff';
+    ctx.shadowColor = '#00f3ff';
+    ctx.shadowBlur = 22;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Solid inner core
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(px, py, r * 0.38, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Orbital Direction Satellite Bead
+    const bx = px + Math.cos(player.angle) * (r + 5);
+    const by = py + Math.sin(player.angle) * (r + 5);
+    ctx.fillStyle = '#00f3ff';
+    ctx.shadowColor = '#00f3ff';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(bx, by, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 9. Particles
+  for (const p of particles) {
+    const ptx = OFFSET_X + p.gx * TILE;
+    const pty = OFFSET_Y + p.gy * TILE;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(ptx, pty, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+resize();
+generateMaze(1);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
